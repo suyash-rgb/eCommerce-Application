@@ -2,6 +2,7 @@ package com.dailycodework.dreamshops.service.product;
 
 import com.dailycodework.dreamshops.DTO.ImageDto;
 import com.dailycodework.dreamshops.DTO.ProductDto;
+import com.dailycodework.dreamshops.exceptions.AlreadyExistsException;
 import com.dailycodework.dreamshops.exceptions.ProductNotFoundException;
 import com.dailycodework.dreamshops.model.Category;
 import com.dailycodework.dreamshops.model.Image;
@@ -23,15 +24,11 @@ import java.util.Optional;
 @RequiredArgsConstructor // this will include fields in constructor which are either static or final
 public class ProductService implements IProductService{
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
     private final ProductRepository productRepository;
 
-    @Autowired
     private final ImageRepository imageRepository;
-
 
     private final ModelMapper modelMapper;
 
@@ -42,6 +39,9 @@ public class ProductService implements IProductService{
         //If no, then save it as a new category
         //Then set it as the new product category
 
+        if(productExists(request.getName(), request.getBrand())){
+            throw new AlreadyExistsException(request.getBrand() +" "+request.getName() +"already exists, you may update this product instead");
+        }
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(()->{
                     Category newCategory = new Category(request.getCategory().getName());
@@ -49,6 +49,10 @@ public class ProductService implements IProductService{
                 });
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
+    }
+
+    private boolean productExists(String name, String brand){
+        return productRepository.existsByNameAndBrand(name, brand);
     }
 
     private Product createProduct(AddProductRequest request, Category category){
@@ -100,7 +104,6 @@ public class ProductService implements IProductService{
        existingProduct.setInventory(request.getInventory());
        existingProduct.setDescription(request.getDescription());
 
-       CategoryRepository categoryRepository = null;
        Category category = categoryRepository.findByName(request.getCategory().getName());
        existingProduct.setCategory(category);
        return existingProduct;

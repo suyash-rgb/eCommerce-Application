@@ -66,8 +66,9 @@ public class CartItemService implements ICartItemService {
                 .filter(item-> item.getProduct().getId().equals(productId))
                 .findFirst()
                 .ifPresent(item->{
+                    System.out.println("Updating item: "+item);
                     item.setQuantity((quantity));
-                    item.setUnitPrice(item.getProduct().getPrice());
+                    item.setTotalPrice();
                     item.setTotalPrice();
                 });
         BigDecimal totalAmount = cart.getItems()
