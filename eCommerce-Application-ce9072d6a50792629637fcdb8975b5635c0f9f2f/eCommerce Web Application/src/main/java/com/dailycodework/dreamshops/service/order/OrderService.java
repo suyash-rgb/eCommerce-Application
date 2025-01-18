@@ -2,6 +2,7 @@ package com.dailycodework.dreamshops.service.order;
 
 import com.dailycodework.dreamshops.DTO.OrderDto;
 import com.dailycodework.dreamshops.enums.OrderStatus;
+import com.dailycodework.dreamshops.exceptions.EmptyCartException;
 import com.dailycodework.dreamshops.exceptions.ResourceNotFoundException;
 import com.dailycodework.dreamshops.model.Cart;
 import com.dailycodework.dreamshops.model.Order;
@@ -39,6 +40,11 @@ public class OrderService implements IOrderService{
     @Override
     public Order placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserID(userId);
+
+        if(cart.getItems().isEmpty()){
+            throw new EmptyCartException("Cart is empty, cannot place an order");
+        }
+
         Order order = createOrder(cart);
         List<OrderItem> orderItemsList = createOrderItems(order, cart);
         order.setOrderItems(new HashSet<>(orderItemsList));

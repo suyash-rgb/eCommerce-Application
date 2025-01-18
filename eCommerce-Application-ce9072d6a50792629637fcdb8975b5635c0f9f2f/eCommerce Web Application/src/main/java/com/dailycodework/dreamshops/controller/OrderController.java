@@ -1,6 +1,7 @@
 package com.dailycodework.dreamshops.controller;
 
 import com.dailycodework.dreamshops.DTO.OrderDto;
+import com.dailycodework.dreamshops.exceptions.EmptyCartException;
 import com.dailycodework.dreamshops.exceptions.ResourceNotFoundException;
 import com.dailycodework.dreamshops.model.Order;
 import com.dailycodework.dreamshops.response.ApiResponse;
@@ -26,7 +27,9 @@ public class OrderController {
             Order order = orderService.placeOrder(userId);
             OrderDto orderDto = orderService.convertToDto(order);
             return ResponseEntity.ok(new ApiResponse("Item Order Success!", orderDto));
-        }catch(Exception e){
+        } catch(EmptyCartException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Error: "+e.getMessage(), null));
+        } catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Error Occured", e.getMessage()));
         }
     }

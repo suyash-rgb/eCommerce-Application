@@ -1,6 +1,5 @@
 package com.dailycodework.dreamshops.controller;
 
-//import com.dailycodework.dreamshops.exceptions.AlreadyExistsException;
 import com.dailycodework.dreamshops.exceptions.AlreadyExistsException;
 import com.dailycodework.dreamshops.exceptions.ResourceNotFoundException;
 import com.dailycodework.dreamshops.model.Category;
@@ -45,8 +44,8 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category/{id}/category")
-    public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id){
+    @GetMapping("/category/{categoryId}/category")
+    public ResponseEntity<ApiResponse> getCategoryById(@PathVariable("categoryId") Long id){
         try{
             Category theCategory = categoryService.getCategoryById(id);
             return ResponseEntity.ok(new ApiResponse("Found!", theCategory));
@@ -57,7 +56,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("category/{name}/category")
+    @GetMapping("category/{name}")
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name){
         try{
             Category theCategory = categoryService.getCategoryByName(name);
@@ -70,8 +69,8 @@ public class CategoryController {
     }
 
 
-    @DeleteMapping("category/{id}/delete")
-    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id){
+    @DeleteMapping("category/{categoryId}/delete")
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable("categoryId") Long id){
         try{
             categoryService.getCategoryById(id);
             return ResponseEntity.ok(new ApiResponse("Found!", null));
@@ -82,8 +81,8 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/category/{id}/update")
-    public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, @RequestBody Category category){
+    @PutMapping("/category/{categoryId}/update")
+    public ResponseEntity<ApiResponse> updateCategory(@PathVariable("categoryId") Long id, @RequestBody Category category){
        try{
            Category updatedCategory = categoryService.updateCategory(category, id);
            return ResponseEntity.ok(new ApiResponse("Update Success", updatedCategory));

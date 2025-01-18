@@ -1,5 +1,6 @@
 package com.dailycodework.dreamshops.service.cart;
 
+import com.dailycodework.dreamshops.exceptions.EmptyCartException;
 import com.dailycodework.dreamshops.exceptions.ResourceNotFoundException;
 import com.dailycodework.dreamshops.model.Cart;
 import com.dailycodework.dreamshops.model.User;
@@ -25,7 +26,8 @@ public class CartService implements ICartService {
 
     @Override
     public Cart getCartByUserID(Long userId) {
-        return cartRepository.findByUserId(userId);
+        return cartRepository.findByUserId(userId)
+                .orElseThrow(()-> new EmptyCartException("No items added in cart for "+userId));
     }
 
     @Override
